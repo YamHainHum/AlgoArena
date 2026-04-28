@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALGO ARENA | Visualizer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="script.js" defer></script>
+</head>
+<body class="dark-theme">
+    <header class="top-nav">
+        <div class="navbar-row header-row">
+            <div class="brand">
+                <h1>ALGO ARENA</h1>
+            </div>
+
+            <div class="data-controls navbar-controls-group">
+                <button id="generateBtn" class="btn new-array-btn">New Array</button>
+                <button id="deepBenchmarkBtn" class="btn">🚀 Deep Benchmark</button>
+                <button id="globalLeaderboardBtn" class="btn">🏆 Leaderboard</button>
+
+                <div class="slider-group dropdown-wrapper">
+                    <label for="initialCondition">Initial Condition</label>
+                    <select id="initialCondition">
+                        <option value="random">Random</option>
+                        <option value="nearly">Nearly Sorted</option>
+                        <option value="reversed">Reversed</option>
+                        <option value="few">Few Unique</option>
+                    </select>
+                </div>
+
+                <div class="slider-group slider-control slider-wrapper">
+                    <label for="arraySize" class="slider-label">Size</label>
+                    <input type="range" id="arraySize" min="5" max="100" value="50">
+                    <span id="arraySizeValue" class="slider-value">50</span>
+                </div>
+
+                <div id="maxValueWrapper" class="slider-group slider-control slider-wrapper">
+                    <label id="maxValueLabel" for="maxValue" class="slider-label">Max Value</label>
+                    <input type="range" id="maxValue" min="10" max="500" value="100">
+                    <span id="maxValueValue" class="slider-value">100</span>
+                </div>
+            </div>
+
+            <div class="algo-selector">
+                <label for="primaryAlgo">Algorithm</label>
+                <select id="primaryAlgo">
+                    <option value="bubble">Bubble Sort</option>
+                    <option value="selection">Selection Sort</option>
+                    <option value="insertion">Insertion Sort</option>
+                    <option value="merge">Merge Sort</option>
+                    <option value="quick">Quick Sort</option>
+                    <option value="heap">Heap Sort</option>
+                </select>
+                <!-- Feature 3: Live complexity badge -->
+                <div id="complexityBadge" class="complexity-badge">
+                    Time: O(n²)<br>Space: O(1)
+                </div>
+            </div>
+        </div>
+
+        <div class="navbar-row header-row">
+            <div class="feature-actions">
+                <!-- Feature 2: Theme toggle -->
+                <button id="themeToggleBtn" class="btn" title="Toggle Theme">🌙</button>
+                <!-- Feature 5: Compare mode -->
+                <button id="compareModeBtn" class="btn">Compare Mode</button>
+                <!-- Feature 9: Race mode -->
+                <button id="raceModeBtn" class="btn">Race Mode 🏁</button>
+                <!-- Feature 4: Keyboard shortcuts modal -->
+                <button id="shortcutsBtn" class="btn">Shortcuts</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="workspace">
+        <section class="visualization-stage">
+            <div id="visualModeContainer" class="mode-section">
+                <!-- Feature 1: Expandable chart panel -->
+                <div id="chartPanel" class="chart-panel">
+                    <div class="chart-panel-toolbar" style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                        <button id="expandChartBtn" class="panel-btn" title="Expand"><i class="fas fa-expand"></i></button>
+                        <button id="exitExpandBtn" class="panel-btn exit-expand-btn" title="Exit Fullscreen"><i class="fas fa-compress"></i></button>
+                    </div>
+
+                    <div id="singleChartView" class="single-view">
+                        <div class="bar-panel">
+                            <div id="barContainer" class="bar-container"></div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 5: Side-by-side compare container -->
+                    <div id="compareContainer" class="compare-container" hidden>
+                        <div class="compare-panel">
+                            <div class="compare-header">
+                                <span>Left</span>
+                                <select id="leftAlgo">
+                                    <option value="bubble">Bubble Sort</option>
+                                    <option value="selection">Selection Sort</option>
+                                    <option value="insertion">Insertion Sort</option>
+                                    <option value="merge">Merge Sort</option>
+                                    <option value="quick" selected>Quick Sort</option>
+                                    <option value="heap">Heap Sort</option>
+                                </select>
+                                <span id="leftWinnerBadge" class="winner-badge hidden">Winner 🏆</span>
+                            </div>
+                            <div id="leftBarContainer" class="bar-container compare-bars left-bars"></div>
+                        </div>
+
+                        <div class="compare-panel">
+                            <div class="compare-header">
+                                <span>Right</span>
+                                <select id="rightAlgo">
+                                    <option value="bubble">Bubble Sort</option>
+                                    <option value="selection">Selection Sort</option>
+                                    <option value="insertion">Insertion Sort</option>
+                                    <option value="merge" selected>Merge Sort</option>
+                                    <option value="quick">Quick Sort</option>
+                                    <option value="heap">Heap Sort</option>
+                                </select>
+                                <span id="rightWinnerBadge" class="winner-badge hidden">Winner 🏆</span>
+                            </div>
+                            <div id="rightBarContainer" class="bar-container compare-bars right-bars"></div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 9: Grid race container -->
+                    <div id="raceContainer" class="race-container" hidden>
+                        <div id="raceGrid" class="race-grid"></div>
+                    </div>
+                </div>
+
+                <div class="playback-bar">
+                    <div class="media-controls">
+                        <button id="btn-first" title="Go to Beginning"><i class="fas fa-fast-backward"></i></button>
+                        <button id="btn-prev" title="Step Back"><i class="fas fa-step-backward"></i></button>
+                        <button id="btn-play-pause" title="Play/Pause" class="play-btn"><i class="fas fa-play"></i></button>
+                        <button id="btn-next" title="Step Forward"><i class="fas fa-step-forward"></i></button>
+                        <button id="btn-last" title="Go to End"><i class="fas fa-fast-forward"></i></button>
+                    </div>
+
+                    <div class="speed-control">
+                        <label for="speedSlider" class="slider-label">Speed</label>
+                        <input type="range" id="speedSlider" min="1" max="100" value="50">
+                    </div>
+
+                    <div class="sound-control">
+                        <button id="soundToggle" class="btn-icon" title="Toggle Sound"><i class="fas fa-volume-up"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Existing analytics and leaderboard section -->
+            <div id="analyticsModeContainer" class="mode-section analytics-mode" style="display:none;">
+                <nav id="dashboard-tabs" class="dashboard-tabs">
+                    <button id="tab-visual" class="btn">Visual Mode</button>
+                    <button id="tab-analytics" class="btn">Analytics Mode</button>
+                    <button id="tab-leaderboard" class="btn">Leaderboard</button>
+                </nav>
+
+                <div id="analytics-dashboard" class="dashboard-card">
+                    <h2>Analytics Dashboard</h2>
+                    <canvas id="analyticsChart" height="120"></canvas>
+                    <div id="analyticsResults" class="dashboard-text"></div>
+                </div>
+
+                <div id="leaderboard" class="dashboard-card" style="display:none;">
+                    <h2>Leaderboard</h2>
+                    <table id="leaderboardTable">
+                        <thead>
+                            <tr>
+                                <th>Algorithm</th>
+                                <th>Time (ms)</th>
+                                <th>Comparisons</th>
+                                <th>Swaps</th>
+                                <th>Size</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <aside class="study-panel" id="studyPanel">
+            <div class="panel-header">
+                <h2>Study Mode</h2>
+                <span class="step-counter">Step: <span id="currentStep">0</span> / <span id="totalSteps">0</span></span>
+            </div>
+            <!-- DESCRIPTION REMOVED - PSEUDOCODE FIX -->
+
+                        <div id="pseudoCodeWrapper" class="code-tracker code-container"> <!-- FRESH REDESIGN -->
+                                <p class="pseudocode-label">⌨ PSEUDOCODE</p> <!-- FRESH REDESIGN -->
+                <pre id="pseudoCode" class="pseudocode-box">for i = 0 to n-1
+  for j = 0 to n-i-1
+    if arr[j] > arr[j+1]
+      swap(arr[j], arr[j+1])</pre>
+                                <p class="pseudocode-hint">🔍 click to expand</p> <!-- FRESH REDESIGN -->
+                <div id="actionDescription" class="step-summary">Starting Bubble Sort</div>
+            </div>
+
+            <div id="liveVariables" class="variable-tracker live-variables"> <!-- FRESH REDESIGN -->
+                <h3>LIVE VARIABLES</h3> <!-- FRESH REDESIGN -->
+                <div class="var-grid vars-grid">
+                    <div class="var-item variable-box" title="Current outer loop index or heapify node"><span>i:</span> <span id="var-i">-</span></div>
+                    <div class="var-item variable-box" title="Current inner loop index or child node"><span>j:</span> <span id="var-j">-</span></div>
+                    <div class="var-item variable-box" title="Pivot/key value"><span>Pivot:</span> <span id="var-pivot">-</span></div>
+                    <div class="var-item variable-box comparing" title="Current comparison or swap action"><span>Comparing:</span> <span id="var-comparing">-</span></div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Feature 4: Keyboard shortcuts modal -->
+    <div id="shortcutsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="shortcutsTitle">
+        <div class="modal-content">
+            <h3 id="shortcutsTitle">Keyboard Shortcuts</h3>
+            <ul class="shortcut-list">
+                <li><strong>Space</strong> Play / Pause</li>
+                <li><strong>ArrowRight</strong> Step Forward</li>
+                <li><strong>ArrowLeft</strong> Step Backward</li>
+                <li><strong>R</strong> New Array</li>
+                <li><strong>F</strong> Toggle Fullscreen</li>
+                <li><strong>T</strong> Toggle Theme</li>
+                <li><strong>M</strong> Toggle Sound</li>
+            </ul>
+            <button id="closeShortcutsModal" class="btn">Close</button>
+        </div>
+    </div>
+
+    <div id="benchmarkModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="benchmarkTitle">
+        <div class="modal-content benchmark-modal-content">
+            <div class="benchmark-modal-header">
+                <h3 id="benchmarkTitle">Deep Benchmark Results</h3>
+                <button id="closeBenchmarkModal" class="btn">Close</button>
+            </div>
+            <div class="benchmark-size-controls">
+                <div class="benchmark-size-field">
+                    <label for="benchmarkCustomSize">Custom Array Size (up to 500,000)</label>
+                    <input type="number" id="benchmarkCustomSize" min="5" max="500000" step="1" placeholder="Uses slider size when empty">
+                </div>
+                <button id="benchmarkRunBtn" class="btn" type="button">Run Benchmark</button>
+            </div>
+            <p id="benchmarkMeta" class="benchmark-meta">Array Size: -</p>
+            <div class="benchmark-table-wrap">
+                <table id="benchmarkResultsTable" class="benchmark-table">
+                    <thead>
+                        <tr>
+                            <th>Algorithm</th>
+                            <th>Time (ms)</th>
+                            <th>Comparisons</th>
+                            <th>Swaps</th>
+                        </tr>
+                    </thead>
+                    <tbody id="benchmarkResultsBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="leaderboardModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="leaderboardTitle">
+        <div class="modal-content leaderboard-modal-content">
+            <div class="benchmark-modal-header">
+                <h3 id="leaderboardTitle">Global Leaderboard</h3>
+                <button id="closeLeaderboardModal" class="btn">Close</button>
+            </div>
+            <div class="benchmark-table-wrap">
+                <table id="globalLeaderboardTable" class="benchmark-table">
+                    <thead>
+                        <tr>
+                            <th>Algorithm</th>
+                            <th>Total Wins</th>
+                            <th>Win %</th>
+                        </tr>
+                    </thead>
+                    <tbody id="globalLeaderboardBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="pseudoModal"> <!-- FRESH REDESIGN -->
+        <div id="pseudoModalContent"> <!-- FRESH REDESIGN -->
+            <div id="pseudoModalHeader"> <!-- FRESH REDESIGN -->
+                <span id="pseudoModalAlgoName"></span> <!-- FRESH REDESIGN -->
+                <button id="pseudoModalClose">✕ Close</button> <!-- FRESH REDESIGN -->
+            </div>
+            <pre id="pseudoModalCode"></pre> <!-- FRESH REDESIGN -->
+        </div>
+    </div>
+
+</body>
+</html>
