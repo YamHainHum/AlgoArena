@@ -81,10 +81,10 @@ const el = {
     studyPanel: document.getElementById('studyPanel')
 };
 
-const BACKEND_HOST = (typeof window !== 'undefined' && window.location && window.location.hostname)
-    ? window.location.hostname
-    : 'localhost';
-const API_BASE_URL = `http://${BACKEND_HOST}:8080/api`;
+// Use Railway backend in production, localhost for local development
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:8080/api'
+  : 'https://algoarena-production-3419.up.railway.app/api';
 const BENCHMARK_MIN_SIZE = 5;
 const BENCHMARK_MAX_SIZE = 500000;
 const MAX_CAPTURED_STEPS = 6000;
