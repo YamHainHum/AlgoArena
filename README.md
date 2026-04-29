@@ -6,13 +6,12 @@
 
 An interview-ready, full-stack algorithm visualization and benchmarking arena with modern UI and production-grade Spring Boot services.
 
-Live Demo: Coming Soon
+🚀 **Live Demo**: [algo-arena-sorting.vercel.app](https://algo-arena-sorting.vercel.app)  
+🔧 **Backend API**: [Railway](https://algoarena-production-3419.up.railway.app)  
+📂 **Source Code**: [github.com/YamHainHum/AlgoArena](https://github.com/YamHainHum/AlgoArena)
 
-GitHub Repo: Coming Soon
-
-Screenshots: Coming Soon
-
-Video Demo: Coming Soon
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com)
+[![Deployed on Railway](https://img.shields.io/badge/Deployed%20on-Railway-0B0D0E?logo=railway&logoColor=white)](https://railway.app)
 
 ## Table of Contents
 - [✨ Features](#-features)
@@ -172,6 +171,9 @@ AlgoArena/
 - Shows asynchronous, multi-threaded benchmarking with safe metrics collection
 - Highlights API design, validation, and CORS configuration for real-world frontend integration
 
+## 📸 Screenshots
+![App Screenshot](frontend/screenshots/app-screenshot.png)
+
 ## 🧰 Troubleshooting
 - **Deep Benchmark shows Failed to fetch**: Ensure backend is running on port 8080 (`mvn spring-boot:run`).
 - **Port 8080 already in use**: Stop the existing service or change `server.port` in [src/main/resources/application.properties](src/main/resources/application.properties).
@@ -181,6 +183,7 @@ AlgoArena/
 ## 📜 License & Credits
 ### 👤 Author
 **Shubham Kumar**  
+🚀 **Live Project**: [algo-arena-sorting.vercel.app](https://algo-arena-sorting.vercel.app)  
 [🔗 GitHub](https://github.com/YamHainHum) • [💼 LinkedIn](https://www.linkedin.com/in/shubhamkumar-dev-mca/)
 
 ### 📄 License
